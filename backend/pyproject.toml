@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Example of FastAPI backend for DataMinds bootcamp"
 readme = "README.md"
 requires-python = ">= 3.12"
-authors = [{ name = "Elkhn", email = "elxana@azercell.com" }]
+authors = [{ name = "Seda", email = "sedaelekberova17@gmail.com" }]
 dependencies = [
     "fastapi>=0.116.1",
     "openpyxl>=3.1.5",
