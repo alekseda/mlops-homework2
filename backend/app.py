@@ -189,7 +189,7 @@ async def predict(file: UploadFile = File(...)) -> Dict[str, Any]:
                 if temp_file_path and os.path.exists(temp_file_path):
                     try:
                         os.unlink(temp_file_path)
-                    except:
+                    except OSError:
                         pass
         
         # Method 2: If predict_main failed or not available, use mock predictions
