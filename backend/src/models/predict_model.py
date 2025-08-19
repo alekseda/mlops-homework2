@@ -1,11 +1,17 @@
-import pandas as pd
-import numpy as np
+import warnings
+
 import joblib
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix, classification_report
-from sklearn.model_selection import train_test_split
+import numpy as np
+import pandas as pd
 import seaborn as sns
-import warnings
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    roc_auc_score,
+    roc_curve,
+)
+from sklearn.model_selection import train_test_split
 
 warnings.simplefilter("ignore", category=FutureWarning)
 warnings.simplefilter("ignore", category=UserWarning)
@@ -54,7 +60,9 @@ def load_test_data(file_path="processed_multisim_dataset.parquet"):
         y = df["target"]
 
         # Use same split as training
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=0
+        )
 
         print(f"✅ Test data loaded: {X_test.shape}")
         return X_train, X_test, y_train, y_test
@@ -83,10 +91,14 @@ def make_predictions(model, X_test):
     try:
         # Make predictions
         y_pred = model.predict(X_test)
-        y_pred_proba = model.predict_proba(X_test)[:, 1]  # Probability of positive class
+        y_pred_proba = model.predict_proba(X_test)[
+            :, 1
+        ]  # Probability of positive class
 
         print(f"✅ Predictions generated for {len(y_pred)} samples")
-        print(f"Positive predictions: {sum(y_pred)} ({sum(y_pred)/len(y_pred)*100:.1f}%)")
+        print(
+            f"Positive predictions: {sum(y_pred)} ({sum(y_pred)/len(y_pred)*100:.1f}%)"
+        )
 
         return y_pred, y_pred_proba
 
@@ -143,7 +155,12 @@ def plot_confusion_matrix(y_test, y_pred):
 
     plt.figure(figsize=(8, 6))
     sns.heatmap(
-        cm, annot=True, fmt="d", cmap="Blues", xticklabels=["No", "Yes"], yticklabels=["No", "Yes"]
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=["No", "Yes"],
+        yticklabels=["No", "Yes"],
     )
     plt.title("Confusion Matrix")
     plt.xlabel("Predicted")
@@ -225,8 +242,20 @@ def prediction_analysis(y_test, y_pred, y_pred_proba):
 
     # Prediction probability distribution
     plt.figure(figsize=(10, 6))
-    plt.hist(y_pred_proba[y_test == 0], bins=50, alpha=0.7, label="Negative Class", color="red")
-    plt.hist(y_pred_proba[y_test == 1], bins=50, alpha=0.7, label="Positive Class", color="blue")
+    plt.hist(
+        y_pred_proba[y_test == 0],
+        bins=50,
+        alpha=0.7,
+        label="Negative Class",
+        color="red",
+    )
+    plt.hist(
+        y_pred_proba[y_test == 1],
+        bins=50,
+        alpha=0.7,
+        label="Positive Class",
+        color="blue",
+    )
     plt.xlabel("Prediction Probability")
     plt.ylabel("Frequency")
     plt.title("Distribution of Prediction Probabilities by True Class")

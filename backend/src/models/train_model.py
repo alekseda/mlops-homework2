@@ -1,27 +1,25 @@
-import pandas as pd
+import warnings
 
 import joblib
-
-from sklearn.utils import shuffle
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import RobustScaler
+import optuna
+import pandas as pd
 from category_encoders import CatBoostEncoder
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.linear_model import LogisticRegression
+from scipy.stats import ttest_rel
+from sklearn.compose import ColumnTransformer
+from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import SelectPercentile, chi2
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import PowerTransformer, RobustScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.utils import shuffle
 from xgboost import XGBClassifier
-from sklearn.impute import SimpleImputer
-from sklearn.feature_selection import SelectPercentile, chi2
-from sklearn.metrics import classification_report, accuracy_score
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import PowerTransformer
-from scipy.stats import ttest_rel
-import optuna
-import warnings
 
 warnings.simplefilter("ignore", category=FutureWarning)
 warnings.simplefilter("ignore", category=UserWarning)
@@ -104,7 +102,11 @@ def create_model_pipelines(preprocessor):
                 (
                     "classifier",
                     LogisticRegression(
-                        penalty="l1", C=0.5, solver="liblinear", max_iter=1000, random_state=42
+                        penalty="l1",
+                        C=0.5,
+                        solver="liblinear",
+                        max_iter=1000,
+                        random_state=42,
                     ),
                 ),
             ]
@@ -116,7 +118,10 @@ def create_model_pipelines(preprocessor):
             ]
         ),
         "KNN": Pipeline(
-            [("preprocessor", preprocessor), ("classifier", KNeighborsClassifier(n_neighbors=5))]
+            [
+                ("preprocessor", preprocessor),
+                ("classifier", KNeighborsClassifier(n_neighbors=5)),
+            ]
         ),
         "SVM": Pipeline(
             [
@@ -158,7 +163,9 @@ def optimize_xgboost(X, y, preprocessor, n_trials=100):
             "random_state": 42,
         }
 
-        clf = Pipeline([("preprocessor", preprocessor), ("classifier", XGBClassifier(**param))])
+        clf = Pipeline(
+            [("preprocessor", preprocessor), ("classifier", XGBClassifier(**param))]
+        )
 
         scores = cross_val_score(clf, X, y, cv=3, scoring="accuracy")
         return -scores.mean()
@@ -290,7 +297,9 @@ def main():
         return None
 
     # Split data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=0
+    )
     print(f"Training set: {X_train.shape}, Test set: {X_test.shape}")
 
     # Create preprocessing pipeline
@@ -307,7 +316,10 @@ def main():
         {"use_label_encoder": False, "eval_metric": "logloss", "random_state": 42}
     )
     models["XGBoost (Optimized)"] = Pipeline(
-        [("preprocessor", preprocessor), ("classifier", XGBClassifier(**best_xgb_params))]
+        [
+            ("preprocessor", preprocessor),
+            ("classifier", XGBClassifier(**best_xgb_params)),
+        ]
     )
 
     # Evaluate all models

@@ -1,9 +1,12 @@
-import boto3
-import pandas as pd
 import os
 
+import boto3
+import pandas as pd
 
-def download_from_s3(bucket_name, s3_file_key, local_file_path, region_name="us-east-1"):
+
+def download_from_s3(
+    bucket_name, s3_file_key, local_file_path, region_name="us-east-1"
+):
     """
     Download a file from S3 bucket to local directory
 

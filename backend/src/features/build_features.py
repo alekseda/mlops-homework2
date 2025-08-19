@@ -108,7 +108,12 @@ def analyze_correlations(df):
 
         plt.figure(figsize=(10, 8))
         sns.heatmap(
-            correlation_matrix, annot=True, cmap="coolwarm", center=0, square=True, fmt=".3f"
+            correlation_matrix,
+            annot=True,
+            cmap="coolwarm",
+            center=0,
+            square=True,
+            fmt=".3f",
         )
         plt.title("Feature Correlation Matrix")
         plt.tight_layout()
@@ -117,7 +122,9 @@ def analyze_correlations(df):
         # Print correlations with target
         if "target" in available_cols:
             target_corr = (
-                correlation_matrix["target"].drop("target").sort_values(key=abs, ascending=False)
+                correlation_matrix["target"]
+                .drop("target")
+                .sort_values(key=abs, ascending=False)
             )
             print("Features most correlated with target:")
             print(target_corr)
@@ -145,7 +152,9 @@ def feature_engineering(df):
         print("✅ Created tenure-based features")
 
     # Value-based feature combinations
-    val_cols = [col for col in df.columns if col.startswith("val") and col.endswith("_1")]
+    val_cols = [
+        col for col in df.columns if col.startswith("val") and col.endswith("_1")
+    ]
     if len(val_cols) >= 2:
         # Create sum and mean of value features
         df_engineered["val_sum"] = df_engineered[val_cols].sum(axis=1)
@@ -156,7 +165,9 @@ def feature_engineering(df):
     # Binary feature interactions
     if "is_dualsim" in df.columns and "gndr" in df.columns:
         df_engineered["dualsim_gender_interaction"] = (
-            df_engineered["is_dualsim"].astype(str) + "_" + df_engineered["gndr"].astype(str)
+            df_engineered["is_dualsim"].astype(str)
+            + "_"
+            + df_engineered["gndr"].astype(str)
         )
         print("✅ Created interaction features")
 

@@ -61,7 +61,12 @@ def plot_target_distribution(df):
     # Target distribution
     plt.subplot(1, 2, 1)
     target_counts = df["target"].value_counts()
-    plt.pie(target_counts.values, labels=target_counts.index, autopct="%1.1f%%", startangle=90)
+    plt.pie(
+        target_counts.values,
+        labels=target_counts.index,
+        autopct="%1.1f%%",
+        startangle=90,
+    )
     plt.title("Target Distribution")
 
     # Target count bar plot
@@ -231,7 +236,10 @@ def plot_correlation_heatmap(df):
         # Feature importance based on correlation with target
         if "target" in available_cols:
             target_corr = (
-                correlation_matrix["target"].drop("target").abs().sort_values(ascending=False)
+                correlation_matrix["target"]
+                .drop("target")
+                .abs()
+                .sort_values(ascending=False)
             )
 
             plt.figure(figsize=(10, 6))
@@ -325,14 +333,20 @@ def plot_prediction_analysis(predictions_df):
     axes[0, 0].set_title("Prediction Distribution")
 
     # Probability distribution
-    axes[0, 1].hist(predictions_df["probability"], bins=30, alpha=0.7, edgecolor="black")
+    axes[0, 1].hist(
+        predictions_df["probability"], bins=30, alpha=0.7, edgecolor="black"
+    )
     axes[0, 1].set_title("Prediction Probability Distribution")
     axes[0, 1].set_xlabel("Probability")
     axes[0, 1].set_ylabel("Frequency")
 
     # Confidence distribution
     axes[1, 0].hist(
-        predictions_df["confidence"], bins=30, alpha=0.7, color="green", edgecolor="black"
+        predictions_df["confidence"],
+        bins=30,
+        alpha=0.7,
+        color="green",
+        edgecolor="black",
     )
     axes[1, 0].set_title("Prediction Confidence Distribution")
     axes[1, 0].set_xlabel("Confidence")
@@ -429,7 +443,9 @@ def plot_feature_importance(model_path="best_model.pkl", X_test=None):
             plt.title("Top 20 Feature Importances")
             plt.xlabel("Features")
             plt.ylabel("Importance")
-            plt.xticks(range(len(indices)), [feature_names[i] for i in indices], rotation=45)
+            plt.xticks(
+                range(len(indices)), [feature_names[i] for i in indices], rotation=45
+            )
             plt.tight_layout()
             plt.show()
 
@@ -446,7 +462,9 @@ def plot_feature_importance(model_path="best_model.pkl", X_test=None):
             plt.title("Top 20 Model Coefficients")
             plt.xlabel("Features")
             plt.ylabel("Coefficient Value")
-            plt.xticks(range(len(indices)), [f"Feature_{i}" for i in indices], rotation=45)
+            plt.xticks(
+                range(len(indices)), [f"Feature_{i}" for i in indices], rotation=45
+            )
             plt.axhline(y=0, color="black", linestyle="-", alpha=0.3)
             plt.tight_layout()
             plt.show()
@@ -479,7 +497,13 @@ def plot_learning_curves(model_path="best_model.pkl", X=None, y=None):
         model = joblib.load(model_path)
 
         train_sizes, train_scores, val_scores = learning_curve(
-            model, X, y, cv=5, n_jobs=-1, train_sizes=np.linspace(0.1, 1.0, 10), scoring="accuracy"
+            model,
+            X,
+            y,
+            cv=5,
+            n_jobs=-1,
+            train_sizes=np.linspace(0.1, 1.0, 10),
+            scoring="accuracy",
         )
 
         train_mean = np.mean(train_scores, axis=1)
@@ -490,7 +514,11 @@ def plot_learning_curves(model_path="best_model.pkl", X=None, y=None):
         plt.figure(figsize=(10, 6))
         plt.plot(train_sizes, train_mean, "o-", color="blue", label="Training Score")
         plt.fill_between(
-            train_sizes, train_mean - train_std, train_mean + train_std, alpha=0.1, color="blue"
+            train_sizes,
+            train_mean - train_std,
+            train_mean + train_std,
+            alpha=0.1,
+            color="blue",
         )
 
         plt.plot(train_sizes, val_mean, "o-", color="red", label="Validation Score")
@@ -530,7 +558,9 @@ def plot_roc_comparison(df, model_path="best_model.pkl"):
         y = df["target"]
 
         # Split data (same as training)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=0
+        )
 
         # Get predictions
         y_scores = model.predict_proba(X_test)[:, 1]
@@ -540,8 +570,12 @@ def plot_roc_comparison(df, model_path="best_model.pkl"):
         auc_score = roc_auc_score(y_test, y_scores)
 
         plt.figure(figsize=(8, 6))
-        plt.plot(fpr, tpr, label=f"Model AUC = {auc_score:.3f}", linewidth=2, color="blue")
-        plt.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Random Classifier")
+        plt.plot(
+            fpr, tpr, label=f"Model AUC = {auc_score:.3f}", linewidth=2, color="blue"
+        )
+        plt.plot(
+            [0, 1], [0, 1], linestyle="--", color="gray", label="Random Classifier"
+        )
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
         plt.title("ROC Curve - Model Performance")
@@ -601,7 +635,9 @@ def main():
         )  # Use sample for speed
 
     else:
-        print("No trained model found - run train_model.py first for model-specific visualizations")
+        print(
+            "No trained model found - run train_model.py first for model-specific visualizations"
+        )
 
     print("\n✅ All visualizations completed!")
     print(
